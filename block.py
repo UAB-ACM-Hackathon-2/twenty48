@@ -1,20 +1,17 @@
-from kivy.properties import NumericProperty
-from kivy.uix.button import Button
+from kivy.core.window import Window
+from kivy.properties import StringProperty
+from kivy.uix.anchorlayout import AnchorLayout
 
-from util import scale
 
+class Block(AnchorLayout):
 
-class Block(Button):
+    value = StringProperty()
 
-    value = NumericProperty()
-
-    def __init__(self, value=0, **kwargs):
-        self.value = value
+    def __init__(self, value=0, pos=(0, 0), **kwargs):
+        self.w = Window.size[0]*.25
+        self.value = str(value)
         super(Block, self).__init__(**kwargs)
-        self.pos = (0, 0)
-        self.size = (scale.dpy(50), scale.dpy(50))
-        self.size_hint = (None, None)
-        self.text = str(self.value)
+        self.pos = pos
 
     def move(self, animation):
         animation.start(self)
