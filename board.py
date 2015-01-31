@@ -108,6 +108,33 @@ class Board(FloatLayout):
     def _to_local(self, x, y):
         return x/self.d, (y - self.h)/self.d
 
+    def _transpose_right(self):
+        transpose = self._empty_grid()
+
+        for i in range(4):
+            for j in range(4):
+                transpose[j][3 - i] = self.grid[i][j]
+
+        return transpose
+
+    def _transpose_left(self):
+        transpose = self._empty_grid()
+
+        for i in range(4):
+            for j in range(4):
+                transpose[3 - j][i] = self.grid[i][j]
+
+        return transpose
+
+    def _transpose_flip(self):
+        transpose = self._empty_grid()
+
+        for i in range(4):
+            for j in range(4):
+                transpose[i][3 - j] = self.grid[i][j]
+
+        return transpose
+
     @staticmethod
     def _empty_grid():
         return [
