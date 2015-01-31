@@ -1,0 +1,19 @@
+#kivy: 1.9.0
+
+
+<Block>:
+    size_hint: (None, None)
+    size: (self.w, self.w)
+
+    Label:
+        canvas.before:
+            Color:
+                rgba: (.2, .6, .2, 1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        size_hint: (.9, .9)
+        anchor_x: 'center'
+        anchor_y: 'center'
+        text: root.value
