@@ -15,3 +15,6 @@ class Block(AnchorLayout):
 
     def move(self, animation):
         animation.start(self)
+
+    def destroy(self):
+        self.parent.remove_widget(self)
