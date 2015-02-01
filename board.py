@@ -1,15 +1,17 @@
-import copy
 from math import fabs
 from random import randint
 
+from kivy.clock import Clock
 from kivy.animation import Animation
 from kivy.core.window import Window
+from kivy.properties import ObjectProperty
 from kivy.uix.floatlayout import FloatLayout
 
 from block import Block
 
 
 class Overlay(FloatLayout):
+    label = ObjectProperty()
     start = 'Press Start'
     win = 'You Win!\n(Press Reset)'
     lose = 'You Lose!\n(Press Reset)'
@@ -44,8 +46,8 @@ class Board(FloatLayout):
         Slide.set_unlock_callback(self._unlock)
 
         super(Board, self).__init__(**kwargs)
-        self.reset()
         self.end = True
+        self.add_widget(self.overlay)
 
     def on_touch_move(self, touch):
         self.move(touch.dsx, touch.dsy)
@@ -81,15 +83,25 @@ class Board(FloatLayout):
         self.grid = self._move(g, direction)
         self.grid = unrotate()
 
-        if self.gameover(old):
-            self.end = True
-            self.overlay.text = self.overlay.lose
-
         for slide in self.slide_queue:
             #print '%s\t%s' % (self._to_local(slide.block.x, slide.block.y), slide.animated_properties)
             slide.start(slide.block)
         self.slide_queue = []
         #print '-----'
+
+        gameover = self.gameover(old)
+        if gameover is not False:
+            self.slide_queue = []
+            self.end = True
+            self.locked = True
+            self.gameover_text = self.overlay.win if gameover == 2048 else self.overlay.lose
+            Clock.schedule_once(self._show_gameover, .4)
+
+    def _show_gameover(self, dt):
+        self.remove_widget(self.overlay)
+        self.add_widget(self.overlay)
+        self.overlay.opacity = 1
+        self.overlay.label.text = self.gameover_text
 
     def _move(self, grid, dir):
         g = self._empty_grid()
@@ -146,13 +158,25 @@ class Board(FloatLayout):
         return row
 
     def gameover(self, old):
-        print old
-        print self.grid
+        if self.has_2048():
+            return 2048
+        if not self.is_full():
+            return False
+
         for x in range(4):
             for y in range(4):
-                if old[x][y] != self.grid[x][y] or (not old[x][y] is None and old[x][y].value != self.grid[x][y].value):
+                if (not old[x][y] is None and self.grid[x][y] is None)\
+                        or (old[x][y] is None and not self.grid[x][y] is None)\
+                        or (not old[x][y] is None and old[x][y].value != self.grid[x][y].value):
                     return False
         return True
+
+    def has_2048(self):
+        for x in range(4):
+            for y in range(4):
+                if not self.grid[x][y] is None and self.grid[x][y].value == 8:
+                    return True
+        return False
 
     def is_full(self):
         for x in range(4):
@@ -167,7 +191,7 @@ class Board(FloatLayout):
         self.grid = self._empty_grid()
         self._unlock()
         self._spawn_block()
-        self.add_widget(self.overlay)
+        self.overlay.opacity = 0
 
     def _spawn_block(self):
         if self.is_full():
