@@ -125,6 +125,7 @@ class Board(FloatLayout):
         return row
 
     def reset(self):
+        self.grid = self._empty_grid()
         self._unlock()
         self._spawn_block()
         self._spawn_block()
