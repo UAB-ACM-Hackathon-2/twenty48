@@ -21,6 +21,7 @@ class Twenty48(App):
 
     def build(self):
         Builder.load_file('./screen.kv')
+        Builder.load_file('./board.kv')
         Builder.load_file('./block.kv')
 
         self.set_screen_size()

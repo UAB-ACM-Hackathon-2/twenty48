@@ -1,3 +1,4 @@
+import copy
 from math import fabs
 from random import randint
 
@@ -6,6 +7,12 @@ from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
 
 from block import Block
+
+
+class Overlay(FloatLayout):
+    start = 'Press Start'
+    win = 'You Win!\n(Press Reset)'
+    lose = 'You Lose!\n(Press Reset)'
 
 
 class Slide(Animation):
@@ -23,6 +30,7 @@ class Slide(Animation):
 
 
 class Board(FloatLayout):
+
     locked = False
 
     def __init__(self, **kwargs):
@@ -31,14 +39,19 @@ class Board(FloatLayout):
         self.d = int(self.w * .25)
         self.grid = self._empty_grid()
         self.slide_queue = []
+        self.overlay = Overlay(pos=(0, self.h), size=(self.w, self.w))
 
         Slide.set_unlock_callback(self._unlock)
 
         super(Board, self).__init__(**kwargs)
         self.reset()
+        self.end = True
+
+    def on_touch_move(self, touch):
+        self.move(touch.dsx, touch.dsy)
 
     def move(self, dx, dy):
-        if self.locked:
+        if self.end or self.locked:
             return
 
         self.locked = True
@@ -62,9 +75,15 @@ class Board(FloatLayout):
                 rotate = self._transpose_right
                 unrotate = self._transpose_left
 
+        old = self._snapshot()
+
         g = rotate()
         self.grid = self._move(g, direction)
         self.grid = unrotate()
+
+        if self.gameover(old):
+            self.end = True
+            self.overlay.text = self.overlay.lose
 
         for slide in self.slide_queue:
             #print '%s\t%s' % (self._to_local(slide.block.x, slide.block.y), slide.animated_properties)
@@ -126,12 +145,33 @@ class Board(FloatLayout):
         row.reverse()
         return row
 
+    def gameover(self, old):
+        print old
+        print self.grid
+        for x in range(4):
+            for y in range(4):
+                if old[x][y] != self.grid[x][y] or (not old[x][y] is None and old[x][y].value != self.grid[x][y].value):
+                    return False
+        return True
+
+    def is_full(self):
+        for x in range(4):
+            for y in range(4):
+                if self.grid[x][y] is None:
+                    return False
+        return True
+
     def reset(self):
+        self.end = False
         self.locked = True
         self._unlock()
         self._spawn_block()
+        self.add_widget(self.overlay)
 
     def _spawn_block(self):
+        if self.is_full():
+            return
+
         x = y = -1
         while x < 0 or y < 0 or not self.grid[y][x] is None:
             x = randint(0, 3)
@@ -186,6 +226,13 @@ class Board(FloatLayout):
                 transpose[a][b] = self.grid[i][j]
 
         return transpose
+
+    def _snapshot(self):
+        g = self._empty_grid()
+        for x in range(4):
+            for y in range(4):
+                g[x][y] = None if self.grid[x][y] is None else Block(self.grid[x][y].value)
+        return g
 
     @staticmethod
     def _empty_grid():

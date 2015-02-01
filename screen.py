@@ -13,11 +13,7 @@ class GameScreen(Screen):
         Window.bind(on_key_down=self.on_key_down)
         Window.on_keyboard = lambda *x: None
 
-    def on_touch_move(self, touch):
-        self.board.move(touch.dsx, touch.dsy)
-
     def on_start_button_pressed(self):
-        print('called')
         if self.button.text == 'Start':
             self.button.text = 'Reset'
         else:

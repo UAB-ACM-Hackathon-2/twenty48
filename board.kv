@@ -1,0 +1,15 @@
+#kivy: 1.9.0
+
+
+<Overlay>:
+    canvas.before:
+        Color:
+            rgba: (0, 0, 0, .5)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+    Label:
+        pos: root.pos
+        text: root.start
+        font_size: '28sp'
