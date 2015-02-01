@@ -157,24 +157,3 @@ class Board(FloatLayout):
             [None, None, None, None],
             [None, None, None, None]
         ]
-
-
-if __name__ == '__main__':
-    scenarios = [
-        [Block(value=2), None, None, None],
-        [None, Block(value=2), None, Block(value=4)],
-        [Block(value=2), None, Block(value=2), None],
-        [Block(value=4), None, Block(value=2), Block(value=2)],
-        [None, Block(value=4), Block(value=2), Block(value=2)],
-        [Block(value=2), Block(value=4), Block(value=8), Block(value=16)],
-        [Block(value=2), Block(value=2), Block(value=4), Block(value=4)],
-        [Block(value=16), Block(value=16), Block(value=16), Block(value=16)],
-    ]
-
-    board = Board()
-    for s in scenarios:
-        board.grid = [s]
-        print board.grid
-        board._move()
-        print board.grid
-        print '---------'

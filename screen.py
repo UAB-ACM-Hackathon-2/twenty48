@@ -1,6 +1,7 @@
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import Screen
+from kivy.app import App
 
 
 class GameScreen(Screen):
@@ -24,3 +25,5 @@ class GameScreen(Screen):
             self.board.move(1, 0)
         elif key == 276:
             self.board.move(-1, 0)
+        elif key in [27, 1000, 1001]:
+            App.get_running_app().stop()
