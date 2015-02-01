@@ -13,6 +13,13 @@
                 size: self.size
                 pos: self.pos
 
+        canvas.after:
+            Color:
+                rgba: (0, 0, 0, 1)
+            Line:
+                width: 2.0
+                points: (self.x, self.y, self.x+self.width, self.y, self.x+self.width, self.y+self.height, self.x, self.y+self.height, self.x, self.y)
+
         color: app.get_text_color(root.value)
         size_hint: (.9, .9)
         anchor_x: 'center'
