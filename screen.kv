@@ -5,6 +5,9 @@
 <GameScreen>:
 
     board: board
+    button: button
+
+    BoxLayout:
 
     Board:
         canvas.before:
@@ -18,3 +21,13 @@
         size_hint: (None, None)
         size: (root.width, root.width)
         center_y: root.center_y
+
+    BoxLayout:
+
+        size_hint_y: .165
+        pos_hint: {'top': self.size_hint_y}
+
+        Button:
+            id: button
+            text: 'Start'
+            on_press: root.on_start_button_pressed()
