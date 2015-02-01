@@ -16,6 +16,13 @@ class GameScreen(Screen):
     def on_touch_move(self, touch):
         self.board.move(touch.dsx, touch.dsy)
 
+    def on_start_button_pressed(self):
+        print('called')
+        if self.button.text == 'Start':
+            self.button.text = 'Reset'
+        else:
+            self.button.text = 'Start'
+
     def on_key_down(self, window, key, *args):
         if key == 273:
             self.board.move(0, 1)
