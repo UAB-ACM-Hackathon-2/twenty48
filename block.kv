@@ -8,11 +8,12 @@
     Label:
         canvas.before:
             Color:
-                rgba: (.2, .6, .2, 1)
+                rgba: app.get_color_value(root.value)
             Rectangle:
                 size: self.size
                 pos: self.pos
 
+        color: app.get_text_color(root.value)
         size_hint: (.9, .9)
         anchor_x: 'center'
         anchor_y: 'center'
