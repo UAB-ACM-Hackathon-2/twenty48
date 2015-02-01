@@ -9,7 +9,6 @@ from block import Block
 
 
 class Slide(Animation):
-
     _unlock_callback = None
 
     def __init__(self, **kwargs):
@@ -23,12 +22,11 @@ class Slide(Animation):
 
 
 class Board(FloatLayout):
-
     locked = False
 
     def __init__(self, **kwargs):
         self.w = Window.size[0]
-        self.h = Window.size[1] - self.w - (Window.size[1] - self.w)/2
+        self.h = Window.size[1] - self.w - (Window.size[1] - self.w) / 2
         self.d = int(self.w * .25)
         self.grid = self._empty_grid()
 
@@ -65,19 +63,40 @@ class Board(FloatLayout):
                     continue
                 block.move(slide)
 
-    def _move_horizontal(self, right):
-        r = range(4) if right else range(3, -1, -1)
+    def _move(self):
+        g = self._empty_grid()
 
         for yi in range(4):
-            for xi in r:
-                print self.grid[yi][xi]
+            row = []
+            for xi in range(4):
+                if not self.grid[yi][xi] is None:
+                    row.append(self.grid[yi][xi])
+            g[yi] = self._collapse(row)
 
-    def _move_vertical(self, up):
-        c = range(4) if up else range(3, -1, -1)
+        self.grid = g
 
-        for xi in range(4):
-            for yi in c:
-                print self.grid[yi][xi]
+    def _collapse(self, irow):
+        row = []
+
+        if len(irow) > 1:
+            merge = 4
+            i = len(irow) - 1
+            while i >= 0:
+                if irow[i].value == irow[i-1].value and merge != i:
+                    row.append(Block(value=irow[i].value * 2))
+                    merge = i
+                    i -= 1
+                else:
+                    row.append(Block(value=irow[i].value))
+                i -= 1
+        elif len(irow) == 1:
+            row.append(Block(value=irow[0].value))
+
+        while len(row) < 4:
+            row.append(None)
+
+        row.reverse()
+        return row
 
     def reset(self):
         self._unlock()
@@ -97,16 +116,16 @@ class Board(FloatLayout):
         self.locked = False
 
     def _to_gx(self, x):
-        return self.d*x
+        return self.d * x
 
     def _to_gy(self, y):
-        return self.d*y + self.h
+        return self.d * y + self.h
 
     def _to_global(self, x, y):
         return self._to_gx(x), self._to_gy(y)
 
     def _to_local(self, x, y):
-        return x/self.d, (y - self.h)/self.d
+        return x / self.d, (y - self.h) / self.d
 
     @staticmethod
     def _empty_grid():
@@ -116,3 +135,24 @@ class Board(FloatLayout):
             [None, None, None, None],
             [None, None, None, None]
         ]
+
+
+if __name__ == '__main__':
+    scenarios = [
+        [Block(value=2), None, None, None],
+        [None, Block(value=2), None, Block(value=4)],
+        [Block(value=2), None, Block(value=2), None],
+        [Block(value=4), None, Block(value=2), Block(value=2)],
+        [None, Block(value=4), Block(value=2), Block(value=2)],
+        [Block(value=2), Block(value=4), Block(value=8), Block(value=16)],
+        [Block(value=2), Block(value=2), Block(value=4), Block(value=4)],
+        [Block(value=16), Block(value=16), Block(value=16), Block(value=16)],
+    ]
+
+    board = Board()
+    for s in scenarios:
+        board.grid = [s]
+        print board.grid
+        board._move()
+        print board.grid
+        print '---------'
