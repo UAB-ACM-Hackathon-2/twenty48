@@ -37,10 +37,11 @@
         center_y: root.center_y
 
     BoxLayout:
-        size_hint_y: .165
-        pos_hint: {'top': self.size_hint_y}
+        size_hint: .6, .1
+        pos_hint: {'top': .125, 'center_x': .5}
 
         Button:
             id: button
             text: 'Start'
+            font_size: '26sp'
             on_press: root.on_start_button_pressed()
