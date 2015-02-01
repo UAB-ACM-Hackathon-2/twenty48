@@ -4,7 +4,7 @@ from random import randint
 from kivy.clock import Clock
 from kivy.animation import Animation
 from kivy.core.window import Window
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, NumericProperty
 from kivy.uix.floatlayout import FloatLayout
 
 from block import Block
@@ -33,6 +33,7 @@ class Slide(Animation):
 
 class Board(FloatLayout):
 
+    score = NumericProperty(0)
     locked = False
 
     def __init__(self, **kwargs):
@@ -134,6 +135,7 @@ class Board(FloatLayout):
                     else:
                         self.slide_queue.append(Slide(irow[i], y=self._to_gy(j if pos else 3-j)))
                         self.slide_queue.append(Slide(irow[i-1], y=self._to_gy(j if pos else 3-j)))
+                    self.score += irow[i].value
                     merge = i
                     i -= 1
                 else:
@@ -174,7 +176,7 @@ class Board(FloatLayout):
     def has_2048(self):
         for x in range(4):
             for y in range(4):
-                if not self.grid[x][y] is None and self.grid[x][y].value == 8:
+                if not self.grid[x][y] is None and self.grid[x][y].value == 2048:
                     return True
         return False
 
@@ -192,6 +194,7 @@ class Board(FloatLayout):
         self._unlock()
         self._spawn_block()
         self.overlay.opacity = 0
+        self.score = 0
 
     def _spawn_block(self):
         if self.is_full():

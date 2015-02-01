@@ -6,6 +6,7 @@
 
     board: board
     button: button
+    score: score
 
     BoxLayout:
 
@@ -23,7 +24,6 @@
         center_y: root.center_y
 
     BoxLayout:
-
         size_hint_y: .165
         pos_hint: {'top': self.size_hint_y}
 
@@ -31,3 +31,18 @@
             id: button
             text: 'Start'
             on_press: root.on_start_button_pressed()
+
+    BoxLayout:
+        size_hint_y: .165
+        pos_hint: {'top': 1}
+
+        Label:
+            text: 'Score:'
+            font_size: '32sp'
+            halign: 'left'
+
+        Label:
+            id: score
+            text: '0'
+            font_size: '32sp'
+            halign: 'right'
