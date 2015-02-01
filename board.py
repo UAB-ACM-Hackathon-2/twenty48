@@ -109,29 +109,24 @@ class Board(FloatLayout):
         return x/self.d, (y - self.h)/self.d
 
     def _transpose_right(self):
-        transpose = self._empty_grid()
-
-        for i in range(4):
-            for j in range(4):
-                transpose[j][3 - i] = self.grid[i][j]
-
-        return transpose
+        return self._transpose(3, 0, False)
 
     def _transpose_left(self):
-        transpose = self._empty_grid()
-
-        for i in range(4):
-            for j in range(4):
-                transpose[3 - j][i] = self.grid[i][j]
-
-        return transpose
+        return self._transpose(0, 3, False)
 
     def _transpose_flip(self):
+        return self._transpose(0, 3, True)
+
+    def _transpose(self, i_offset, j_offset, flip):
         transpose = self._empty_grid()
+
+        print(self.grid)
 
         for i in range(4):
             for j in range(4):
-                transpose[i][3 - j] = self.grid[i][j]
+                a = i if flip else abs(j_offset - j)
+                b = j_offset - j if flip else abs(i_offset - i)
+                transpose[a][b] = self.grid[i][j]
 
         return transpose
 
