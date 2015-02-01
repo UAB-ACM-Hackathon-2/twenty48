@@ -5,10 +5,23 @@
 <GameScreen>:
 
     board: board
-    button: button
     score: score
+    button: button
 
     BoxLayout:
+        size_hint_y: .165
+        pos_hint: {'top': 1}
+
+        Label:
+            text: 'Score:'
+            font_size: '32sp'
+            halign: 'left'
+
+        Label:
+            id: score
+            text: '0'
+            font_size: '32sp'
+            halign: 'right'
 
     Board:
         canvas.before:
@@ -31,18 +44,3 @@
             id: button
             text: 'Start'
             on_press: root.on_start_button_pressed()
-
-    BoxLayout:
-        size_hint_y: .165
-        pos_hint: {'top': 1}
-
-        Label:
-            text: 'Score:'
-            font_size: '32sp'
-            halign: 'left'
-
-        Label:
-            id: score
-            text: '0'
-            font_size: '32sp'
-            halign: 'right'
