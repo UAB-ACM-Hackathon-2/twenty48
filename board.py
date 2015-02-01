@@ -164,6 +164,7 @@ class Board(FloatLayout):
     def reset(self):
         self.end = False
         self.locked = True
+        self.grid = self._empty_grid()
         self._unlock()
         self._spawn_block()
         self.add_widget(self.overlay)

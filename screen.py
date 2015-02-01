@@ -14,10 +14,8 @@ class GameScreen(Screen):
         Window.on_keyboard = lambda *x: None
 
     def on_start_button_pressed(self):
-        if self.button.text == 'Start':
-            self.button.text = 'Reset'
-        else:
-            self.button.text = 'Start'
+        self.board.reset()
+        self.button.text = 'Reset'
 
     def on_key_down(self, window, key, *args):
         if key == 273:
