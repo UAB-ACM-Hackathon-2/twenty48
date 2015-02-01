@@ -12,7 +12,7 @@ class Slide(Animation):
     _unlock_callback = None
 
     def __init__(self, block, **kwargs):
-        super(Slide, self).__init__(duration=.25, **kwargs)
+        super(Slide, self).__init__(duration=.125, **kwargs)
         self.block = block
         self.bind(on_complete=_unlock_callback)
 
@@ -62,13 +62,15 @@ class Board(FloatLayout):
                 rotate = self._transpose_right
                 unrotate = self._transpose_left
 
-        grid = rotate()
-        self.grid = self._move(grid, direction)
+        g = rotate()
+        self.grid = self._move(g, direction)
         self.grid = unrotate()
 
         for slide in self.slide_queue:
+            #print '%s\t%s' % (self._to_local(slide.block.x, slide.block.y), slide.animated_properties)
             slide.start(slide.block)
         self.slide_queue = []
+        #print '-----'
 
     def _move(self, grid, dir):
         g = self._empty_grid()
@@ -125,13 +127,13 @@ class Board(FloatLayout):
         return row
 
     def reset(self):
+        self.locked = True
         self._unlock()
-        self._spawn_block()
         self._spawn_block()
 
     def _spawn_block(self):
         x = y = -1
-        while x < 0 or y < 0 or not self.grid[x][y] is None:
+        while x < 0 or y < 0 or not self.grid[y][x] is None:
             x = randint(0, 3)
             y = randint(0, 3)
 
@@ -139,14 +141,19 @@ class Board(FloatLayout):
         self.add_widget(self.grid[y][x])
 
     def _unlock(self, *args):
+        if not self.locked:
+            return
+
         self.locked = False
 
         self.clear_widgets()
         for y in range(4):
             for x in range(4):
                 if self.grid[y][x] is not None:
-                    self.grid[y][x].pos = (self._to_global(x, y))
+                    self.grid[y][x].pos = self._to_global(x, y)
                     self.add_widget(self.grid[y][x])
+
+        self._spawn_block()
 
     def _to_gx(self, x):
         return self.d * x
